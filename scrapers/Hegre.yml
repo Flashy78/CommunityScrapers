@@ -59,6 +59,7 @@ xPathScrapers:
       $actor: //a[@class="record-model"]
     scene:
       Title: //meta[@property="og:title"]/@content
+      URL: //link[@hreflang="x-default"]/@href
       Details:
         selector: |
           //div[contains(@class,"film-subtitle")]/text()
@@ -148,4 +149,5 @@ xPathScrapers:
       Details:
         selector: //div[@class="description translated-text"]//child::text()
         concat: "\n\n"
-# Last Updated November 3, 2022
+
+# Last Updated November 03, 2022
