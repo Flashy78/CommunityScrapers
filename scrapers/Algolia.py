@@ -14,7 +14,7 @@ try:
     import lxml
 except ModuleNotFoundError:
     print(
-        "You need to install the following modules 'requests', 'bs4', 'lxml'.")
+        "You need to install the following modules 'requests', 'bs4', 'lxml'.", file=sys.stderr)
     sys.exit()
 
 try:
@@ -464,13 +464,14 @@ def parse_movie_json(movie_json: dict) -> dict:
     scrape["date"] = movie_json[0].get(date_by_studio)
 
     scrape[
-        "front_image"] = f"https://transform.gammacdn.com/movies{movie[0].get('cover_path')}_front_400x625.jpg"
+        "front_image"] = f"https://transform.gammacdn.com/movies{movie[0].get('cover_path')}_front_400x625.jpg?width=450&height=636"
     scrape[
-        "back_image"] = f"https://transform.gammacdn.com/movies{movie[0].get('cover_path')}_back_400x625.jpg"
+        "back_image"] = f"https://transform.gammacdn.com/movies{movie[0].get('cover_path')}_back_400x625.jpg?width=450&height=636"
 
     directors = []
-    for director in movie_json[0].get('directors'):
-        directors.append(director.get('name').strip())
+    if movie_json[0].get('directors') is not None:
+        for director in movie_json[0].get('directors'):
+            directors.append(director.get('name').strip())
     scrape["director"] = ", ".join(directors)
     return scrape
 
@@ -488,6 +489,17 @@ def parse_scene_json(scene_json, url=None):
     # Details
     #scrape['details'] = re.sub(r'</br>|<br\s/>|<br>|<br/>', '\n', scene_json.get('description'))
     scrape['details'] = clean_text(scene_json.get('description'))
+
+    # Studio Code
+    if scene_json.get('clip_id'):
+        scrape['code'] = str(scene_json['clip_id'])
+
+    # Director
+    directors = []
+    if scene_json.get('directors') is not None:
+        for director in scene_json.get('directors'):
+            directors.append(director.get('name').strip())
+    scrape["director"] = ", ".join(directors)
 
     # Studio
     scrape['studio'] = {}
